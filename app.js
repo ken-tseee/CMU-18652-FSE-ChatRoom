@@ -29,6 +29,25 @@ io.sockets.on('connection', function (socket) {
 			currentUser.push(data);
 			socket.emit('existed', 'No');
 			socket.broadcast.emit('online', name);
+
+			db.open(function (err, db) {
+				db.collection('chatmessages', function (err, collection) {
+					if (err) {
+						throw err;
+					} else {
+						collection.find().sort({_id: -1}).limit(10).toArray(function (err, docs) {
+							if (err) {
+								throw err;
+							} else {
+								console.log(docs);
+								socket.emit('chatrecord', docs);
+								db.close();
+							}
+						});
+					}
+				});
+			});
+
 		} else {
 			socket.emit('existed', 'Yes');
 		};

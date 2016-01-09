@@ -61,7 +61,7 @@ $(function () {
 
 	socket.on('chatrecord', function (data) {
 		for (var i = data.length-1; i>=data.length-10; i--) {
-			$('#messages').append('<p>' + data[i].name + ': ' + data[i].message + '<br/>' + data[i].time + '</p>');
+			$('#messages').preppend('<p>' + data[i].name + ': ' + data[i].message + '<br/>' + data[i].time + '</p>');
 		};
 	});
 
