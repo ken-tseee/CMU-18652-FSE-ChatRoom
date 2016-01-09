@@ -1,37 +1,68 @@
 
 $(function () {
+	$('#inputarea').hide();
 	var socket = io.connect();
+	var currentname;
 
-	$('#button').click(function () {
+	$('#login').click(function () {
+		socket.emit('checkname', $('#name').val());
+	})
+
+	$('#send').click(function () {
 		// send message
 		var message = $('#input').val();
 		var name    = $('#name').val();
-		var date    = new Date();
+		var date    = new Date().toString().slice(4, 25);
 
-		$('body').append('<p>' + name + ':' + message + '<br/>' + date + '</p>');
+		$('#messages').append('<p>' + name + ':' + message + '<br/>' + date + '</p>');
 
 		socket.emit('message', {
 			name: name,
 			message: message,
 			date: date
 		});
+		$('#inputarea').val('');
+	});
+
+	socket.on('existed', function (data) {
+		if (data=='No') {
+			currentname=$('#name').val();
+			$('#nameblank').hide();
+			$('#inputarea').show();
+			$('currentuser').append(currentname);
+		} else {
+			alert('This name has already existed. Please input another one!');
+		};
 	});
 
 	socket.on('message', function (data) {
 		// receive message
-		$('body').append('<p>' + data.name + ':' + data.message + '<br/>' + data.date + '</p>');
+		if (currentname!=null) {
+			$('#messages').preppend('<p>' + data.name + ':' + data.message + '<br/>' + data.date + '</p>');
+		}
 	});
 
-	socket.on('online', function () {
+	socket.on('online', function (name) {
 		// online
-		var onDate = new Date();
-		$('body').append('<p>' + 'Someone is online!' + '<br/>' + onDate + '</p>');
+		if (currentname!=null) {
+			var onDate = new Date().toString().slice(4, 25);
+		$('#messages').preppend('<p>' + name + ' is online!' + '<br/>' + onDate + '</p>');
+		}
 	});
 
 
-	socket.on('offline', function (name, date) {
+	socket.on('offline', function (name) {
 		// offline
-		var offDate = new Date();
-		$('body').append('<p>' + name + ' is offline!' + '<br/>' + offDate + '</p>');
+		if (currentname!=null) {
+			var offDate = new Date().toString().slice(4, 25);
+		$('#messages').preppend('<p>' + name + ' is offline!' + '<br/>' + offDate + '</p>');
+		}
 	});
+
+	socket.on('chatrecord', function (data) {
+		for (var i = data.length-1; i>=data.length-10; i--) {
+			$('#messages').append('<p>' + data[i].name + ': ' + data[i].message + '<br/>' + data[i].time + '</p>');
+		};
+	});
+
 });

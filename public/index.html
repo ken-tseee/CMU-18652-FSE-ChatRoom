@@ -8,6 +8,18 @@
 		<script src="main.js"></script>
 	</head>
 	<body>
-		<input id="name" placeholder="Name"><input id="input"><button id="button">Send</button>
+		<h1>Chat Room</h1>
+		<div id='nameblank'>
+			<p>Welcome to Chat Room!</p>
+			<input id='name' placeholder="User Name" onkeydown="if(event.keyCode==13){document.getElementById('login').click();return false;}"></input>
+			<button id='login'>Login Now!</button>
+		</div>
+		<div id='inputarea'>
+			<p id='currentuser'>Current User: </p>
+			<input type='text' id='input' onkeydown="if(event.keyCode==13){document.getElementById('send').click();return false;}"></input>
+			<button id='send'>Send</button>
+		</div>
+		<div id='messages'>
+		</div>
 	</body>
 </html>
