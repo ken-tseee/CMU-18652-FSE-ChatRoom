@@ -35,7 +35,19 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('message', function (data) {
-		name = data.name;
+		
+		db.open(function (err, db) {
+			if (err) {
+				throw err;
+			} else {
+				db.collection('chatmessages', function (err, collection) {
+					collection.insert({name: data.name, message: data.message, time: data.date}, function (err, docs) {
+						db.close();
+					});
+				})
+			};
+		});
+
 		socket.broadcast.emit('message', data);
 	});
 
