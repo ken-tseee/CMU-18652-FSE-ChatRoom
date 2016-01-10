@@ -1,11 +1,16 @@
 
 $(function () {
 	$('#inputarea').hide();
+	$('#messages').hide();
 	var socket = io.connect();
 	var currentname;
 
 	$('#login').click(function () {
-		socket.emit('checkname', $('#name').val());
+		if ($('#name').val()=='') {
+			alert('User name cannot be empty!');
+		} else {
+			socket.emit('checkname', $('#name').val());
+		}
 	})
 
 	$('#send').click(function () {
@@ -14,14 +19,28 @@ $(function () {
 		var name = $('#name').val();
 		var date = new Date().toString().slice(4, 25);
 
-		$('#messages').prepend('<p>' + name + ' < ' + date + ' > ' + ':' + '<br/>' + message + '</p>');
+		if (message=='') {
+			alert('Message cannot be empty!');
+		} else {
+			$('#messages').prepend('<p>' + name + ' < ' + date + ' > ' + ':' + '<br/>' + message + '</p>');
 
-		socket.emit('message', {
-			name: name,
-			message: message,
-			date: date
-		});
-		$('#inputarea').val('');
+			socket.emit('message', {
+				name: name,
+				message: message,
+				date: date
+			});
+			$('#input').val('');
+		}
+	});
+
+	$('#logout').click(function () {
+		socket.emit('logout', $('#name').val());
+		$('#inputarea').hide();
+		$('#nameblank').show();
+		$('#messages').empty();
+		$('#messages').hide();
+		$('#name').val('');
+		$('#currentuser').html('Current User: ');
 	});
 
 	socket.on('existed', function (data) {
@@ -30,8 +49,10 @@ $(function () {
 			$('#nameblank').hide();
 			$('#inputarea').show();
 			$('#currentuser').append(currentname);
+			$('#messages').show();
 		} else {
 			alert('This name has already been occupied. Please input another one!');
+			$('#name').val('');
 		};
 	});
 
@@ -49,7 +70,6 @@ $(function () {
 		$('#messages').prepend('<p style="color:green">' + name + ' < ' + onDate + ' > ' + '<br/>' + 'Online!' + '</p>');
 		}
 	});
-
 
 	socket.on('offline', function (name) {
 		// offline

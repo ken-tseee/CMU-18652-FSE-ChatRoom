@@ -75,6 +75,12 @@ io.sockets.on('connection', function (socket) {
 		currentUser.splice(currentUser.indexOf(name), 1);
 	});
 
+	socket.on('logout', function (data) {
+		console.log(data);
+		socket.broadcast.emit('offline', data);
+		currentUser.splice(currentUser.indexOf(data), 1);
+	});
+
 });
 
 

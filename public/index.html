@@ -18,8 +18,9 @@
 			<p id='currentuser'>Current User: </p>
 			<input type='text' id='input' onkeydown="if(event.keyCode==13){document.getElementById('send').click();return false;}"></input>
 			<button id='send'>Send</button>
+			<button id='logout'>Logout</button>
 		</div>
-		<div id='messages'>
+		<div id='messages' style="width: 500px; height:500px; border: 1px solid #999; padding: 3px; overflow-x: visible; overflow-y: scroll; word-wrap:break-word;">
 		</div>
 	</body>
 </html>
